@@ -1,1 +1,1 @@
-link to the project https://starlit-marzipan-bdf1fc.netlify.app
+link to the project https://pokemon-pet-project.netlify.app
