@@ -9,7 +9,10 @@ import {
   StatsWrapper,
   InfoWrapper,
   TypesWrapper,
+  ExitImg,
+  ExitWrapper,
 } from "./PokemonStatsCard.components";
+import { useSelectedPokemon } from "@/components/CustomHooks/useSelectedPokemon";
 import type { Transition } from "@/components/Card";
 import type { PokemonInfo } from "@/components/Modal";
 
@@ -26,6 +29,7 @@ export const PokemonStatsCard: FC<PokemonInfo> = ({
   img,
   types,
 }) => {
+  const { setClickedPokemon } = useSelectedPokemon();
   const typesTitle = `${types.length} ${types.length === 1 ? "type" : "types"}`;
 
   return (
@@ -36,9 +40,12 @@ export const PokemonStatsCard: FC<PokemonInfo> = ({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
+      <ExitWrapper onClick={() => setClickedPokemon(null)}>
+        <ExitImg src="/assets/x.svg" alt="exit button" />
+      </ExitWrapper>
       <ContentWrapper>
         <ImageWrapper>
-          <Img src={img} alt="selected pokemon image" />
+          <Img src={img} alt="pokemon image" />
         </ImageWrapper>
         <MainContentWrapper>
           <Title>{name}</Title>

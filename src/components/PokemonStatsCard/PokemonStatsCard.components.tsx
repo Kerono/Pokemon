@@ -17,6 +17,7 @@ const wrapperStyles = cva({
     border: "1px solid grey",
     borderRadius: `${style.borderRadius}px`,
     display: "flex",
+    position: "relative",
     flexDirection: "column",
     padding: `${style.padding}px`,
     backgroundColor: "darkgrey",
@@ -98,6 +99,30 @@ const typesWrapperStyles = cva({
   },
 });
 
+const exitImgStyles = cva({
+  base: {
+    width: "imgMedium",
+    height: "imgMedium",
+    lg: {
+      width: "imgS",
+      height: "imgS",
+    },
+  },
+});
+
+const exitWrapperStyles = cva({
+  base: {
+    padding: "8px",
+    border: "none",
+    backgroundColor: "transparent",
+    position: "absolute",
+    top: 0,
+    right: 0,
+    transform: "translateY(-100%)",
+    cursor: "pointer",
+  },
+});
+
 const ContentWrapper = styled("div", contentWrapperStyles);
 const Wrapper = motion.create(styled("div", wrapperStyles));
 const Title = styled("div", titleStyles);
@@ -107,6 +132,8 @@ const Img = styled("img", imgStyles);
 const StatsWrapper = styled("div", statsWrapperStyles);
 const InfoWrapper = styled("div", infoWrapperStyles);
 const TypesWrapper = styled("div", typesWrapperStyles);
+const ExitImg = styled("img", exitImgStyles);
+const ExitWrapper = motion.create(styled("button", exitWrapperStyles));
 
 export {
   ContentWrapper,
@@ -118,4 +145,6 @@ export {
   StatsWrapper,
   InfoWrapper,
   TypesWrapper,
+  ExitImg,
+  ExitWrapper,
 };

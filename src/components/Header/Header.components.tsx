@@ -9,7 +9,7 @@ const containerStyles = cva({
   },
 });
 
-const headerImg = cva({
+const headerImgStyles = cva({
   base: {
     width: "imgMedium",
     height: "large",
@@ -33,7 +33,7 @@ const logoStyles = cva({
 });
 
 const HeaderContainer = styled("div", containerStyles);
-const HeaderImg = styled("img", headerImg);
+const HeaderImg = styled("img", headerImgStyles);
 const HeaderLogo = styled("div", logoStyles);
 
 export { HeaderContainer, HeaderImg, HeaderLogo };
