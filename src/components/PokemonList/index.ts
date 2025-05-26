@@ -1,2 +1,1 @@
-export { PokemonList } from './PokemonList.component'
-export { Wrapper } from "./PokemonList.styles"
+export { PokemonList } from "./PokemonList";
