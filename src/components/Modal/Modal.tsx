@@ -43,17 +43,14 @@ export const Modal = () => {
 
   useEffect(() => {
     async function pokemonInfo() {
-      console.log("useEffect call");
       try {
         if (!clickedPokemon?.name) return;
         setDataState("loading");
         const responce = await fetch(
           `https://pokeapi.co/api/v2/pokemon/${clickedPokemon.name}`
         );
-        console.log(responce, "res");
         if (responce.ok) {
           const data: Data = await responce.json();
-          console.log(data, "check");
           const img = data.sprites.front_shiny || data.sprites.front_default;
           setPokemonInfo({
             name: data.name,
@@ -92,7 +89,6 @@ export const Modal = () => {
     function handleClick(event: Event) {
       if (overlayRef.current === event.target) {
         setClickedPokemon(null);
-        console.log("haha close");
       }
     }
     window.addEventListener("click", handleClick);
@@ -100,7 +96,7 @@ export const Modal = () => {
       window.removeEventListener("click", handleClick);
     };
   }, [setClickedPokemon]);
-  console.log(dataState, pokemonInfo);
+
   return (
     <Overlay
       layout

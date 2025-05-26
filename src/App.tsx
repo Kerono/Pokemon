@@ -75,8 +75,6 @@ function App() {
     name: string;
   } | null>(null);
 
-  console.log(clickedPokemon, "clickedPokemon");
-
   const filteredList =
     searchValue === ""
       ? pokemonList
