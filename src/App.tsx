@@ -71,6 +71,7 @@ function App() {
   const [pokemonList, setPokemonList] = useState<CardProps[]>([]);
   const [sort, setSort] = useState<Sort | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [error, setError] = useState<boolean>(false);
   const [clickedPokemon, setClickedPokemon] = useState<{
     name: string;
   } | null>(null);
@@ -99,43 +100,55 @@ function App() {
 
   useEffect(() => {
     const res = async () => {
-      const response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon?limit=${pokemonsLimit}`
-      );
-      const data: PokemonListResponse = await response.json();
+      try {
+        const response = await fetch(
+          `https://pokeapi.co/api/v2/pokemon?limit=${pokemonsLimit}`
+        );
+        const data: PokemonListResponse = await response.json();
 
-      const pokemonInfoPromises: Promise<string>[] = data.results.map(
-        ({ url }) => {
-          return fetch(url)
+        const pokemonInfoPromises: Promise<string>[] = data.results.map(
+          ({ url }) => {
+            return fetch(url)
+              .then((responce) => responce.json())
+              .then(
+                (result: PokemonInfoResponse) => result.sprites.front_default
+              );
+          }
+        );
+
+        const pokemonSpeciesInfoPromises: Promise<{
+          id: number;
+          color: Color;
+        }>[] = data.results.map(({ name }) => {
+          return fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}/`)
             .then((responce) => responce.json())
-            .then(
-              (result: PokemonInfoResponse) => result.sprites.front_default
-            );
+            .then((result: PokemonSpeciesInfoResponse) => ({
+              id: result.id,
+              color: result.color.name,
+            }));
+        });
+        const pokemonsInfo = await Promise.all(pokemonInfoPromises);
+        const pokemonsSpeciesInfo = await Promise.all(
+          pokemonSpeciesInfoPromises
+        );
+
+        const cards: CardProps[] = data.results.map((r, index) => ({
+          id: pokemonsSpeciesInfo[index].id,
+          name: r.name,
+          img: pokemonsInfo[index],
+          color: pokemonsSpeciesInfo[index].color,
+        }));
+        setPokemonList(cards);
+        setIsLoading(false);
+      } catch (error: unknown) {
+        let errorMessage = "Unknown Error";
+        if (error instanceof Error) {
+          errorMessage = error.message;
         }
-      );
-
-      const pokemonSpeciesInfoPromises: Promise<{
-        id: number;
-        color: Color;
-      }>[] = data.results.map(({ name }) => {
-        return fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}/`)
-          .then((responce) => responce.json())
-          .then((result: PokemonSpeciesInfoResponse) => ({
-            id: result.id,
-            color: result.color.name,
-          }));
-      });
-      const pokemonsInfo = await Promise.all(pokemonInfoPromises);
-      const pokemonsSpeciesInfo = await Promise.all(pokemonSpeciesInfoPromises);
-
-      const cards: CardProps[] = data.results.map((r, index) => ({
-        id: pokemonsSpeciesInfo[index].id,
-        name: r.name,
-        img: pokemonsInfo[index],
-        color: pokemonsSpeciesInfo[index].color,
-      }));
-      setPokemonList(cards);
-      setIsLoading(false);
+        console.error(errorMessage);
+        setIsLoading(false);
+        setError(true);
+      }
     };
 
     res();
@@ -172,7 +185,14 @@ function App() {
             value={searchValue}
             onChange={(value: string) => setSearchValue(value)}
           />
-          {isListEmpty ? (
+          {error && (
+            <UserInfo>
+              <div>
+                We have problems on the server side, please try again later
+              </div>
+            </UserInfo>
+          )}
+          {isListEmpty && !error ? (
             <UserInfo>
               <div>Could not find the required pokemon. Check spelling.</div>
             </UserInfo>
